@@ -232,8 +232,12 @@
         ></a-text>
       </a-marker>
 
-      <!-- Bench Marker (using Kanji) -->
-      <a-marker type="pattern" id="bench-marker" url="markers/bench-marker.patt">
+      <!-- Bench Marker -->
+      <a-marker
+        type="pattern"
+        id="bench-marker"
+        url="markers/bench-marker.patt"
+      >
         <!-- Bench 3D model -->
         <a-entity
           position="0 0.2 0"
@@ -258,6 +262,39 @@
           color="#FFFFFF"
           scale="0.5 0.5 0.5"
         ></a-text>
+      </a-marker>
+
+      <!-- Playground Slide Marker (using custom pattern) -->
+      <a-marker
+        type="pattern"
+        url="markers/pattern-slide.patt"
+        id="slide-marker"
+      >
+        <!-- Slide 3D model -->
+        <a-entity
+          position="0 0.5 0"
+          scale="0.3 0.3 0.3"
+          rotation="0 0 0"
+          gltf-model="#slide-model"
+          clickable="name: Playground Slide"
+        >
+        </a-entity>
+
+        <!-- Children playing sound -->
+        <a-entity
+          sound="src: #children-sound; autoplay: true; loop: true; volume: 0.5"
+        ></a-entity>
+
+        <!-- Text label with animation -->
+        <a-text
+          value="Playground Slide"
+          position="0 1.2 0"
+          align="center"
+          color="#FFFF00"
+          scale="0.5 0.5 0.5"
+          animation="property: scale; to: 0.6 0.6 0.6; dir: alternate; loop: true; dur: 1000; easing: easeInOutQuad"
+        >
+        </a-text>
       </a-marker>
 
       <!-- Camera -->
