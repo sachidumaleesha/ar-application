@@ -297,7 +297,7 @@
         </a-text>
       </a-marker>
 
-      <!-- Flowers Marker (using barcode) -->
+      <!-- Flowers Marker -->
       <a-marker
         type="pattern"
         url="markers/flowers-marker.patt"
@@ -323,6 +323,39 @@
         <!-- Text label -->
         <a-text
           value="Flower Bed"
+          position="0 1 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Fountain Marker -->
+      <a-marker
+        type="pattern"
+        url="markers/fountain-marker.patt"
+        id="slide-marker"
+      >
+        <!-- Flowers 3D model -->
+        <a-entity
+          position="0 0.2 0"
+          scale="0.4 0.4 0.4"
+          rotation="0 0 0"
+          gltf-model="#flowers-model"
+          clickable="name: Flower Bed"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
+        >
+        </a-entity>
+
+        <!-- Butterfly particle effect -->
+        <a-entity
+          position="0 0.5 0"
+          particle-system="preset: dust; color: #FF88FF; particleCount: 20; size: 0.1; maxAge: 3"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Fountain"
           position="0 1 0"
           align="center"
           color="#FFFFFF"
