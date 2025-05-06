@@ -184,9 +184,18 @@
         <!-- 3D models - Update these paths to your actual model files -->
         <a-asset-item id="tree-model" src="models/tree.glb"></a-asset-item>
         <a-asset-item id="bench-model" src="models/bench.glb"></a-asset-item>
-        <a-asset-item id="fountain-model" src="models/fountain.glb"></a-asset-item>
-        <a-asset-item id="slide-model" src="models/playground-slide.glb"></a-asset-item>
-        <a-asset-item id="flowers-model" src="models/flowers.glb"></a-asset-item>
+        <a-asset-item
+          id="fountain-model"
+          src="models/fountain.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="slide-model"
+          src="models/playground-slide.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="flowers-model"
+          src="models/flowers.glb"
+        ></a-asset-item>
       </a-assets>
 
       <!-- Tree Marker (using Hiro) -->
@@ -201,22 +210,50 @@
           animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
         >
         </a-entity>
-    
+
         <!-- Bird sound on this marker -->
         <a-entity
           sound="src: #bird-sound; autoplay: true; loop: true; volume: 0.5"
         ></a-entity>
-    
+
         <!-- Particle effect for leaves -->
         <a-entity
           position="0 1 0"
           particle-system="preset: dust; color: #00FF00; particleCount: 50; size: 0.2; maxAge: 2"
         ></a-entity>
-    
+
         <!-- Text label -->
         <a-text
           value="Park Tree"
           position="0 1.5 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Bench Marker (using Kanji) -->
+      <a-marker type="pattern" id="bench-marker" url="markers/bench-marker.patt">
+        <!-- Bench 3D model -->
+        <a-entity
+          position="0 0.2 0"
+          scale="0.4 0.4 0.4"
+          rotation="0 0 0"
+          gltf-model="#bench-model"
+          clickable="name: Park Bench"
+          animation="property: position; to: 0 0.3 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutQuad"
+        >
+        </a-entity>
+
+        <!-- Nature ambient sound -->
+        <a-entity
+          sound="src: #nature-sound; autoplay: true; loop: true; volume: 0.3"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Park Bench"
+          position="0 1 0"
           align="center"
           color="#FFFFFF"
           scale="0.5 0.5 0.5"
