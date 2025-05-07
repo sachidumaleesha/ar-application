@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Park AR Experience</title>
+    <!-- Include A-Frame -->
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <!-- Include AR.js -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <!-- Include animation component -->
+    <script src="https://unpkg.com/aframe-animation-component@5.1.2/dist/aframe-animation-component.min.js"></script>
+    <!-- Include particle system for effects -->
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.9/dist/aframe-particle-system-component.min.js"></script>
+    <style>
+      #arjsDebugUIContainer {
+        display: none;
+      }
+      .instructions {
+        position: fixed;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        z-index: 999;
+      }
+      .info-panel {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        z-index: 999;
+        display: none;
+      }
+      .buttons {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+      }
+      .ar-button {
+        padding: 10px;
+        margin: 5px;
+        background-color: rgba(0, 128, 255, 0.7);
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+    </style>
+
+    <script>
+      // Custom component for handling click interactions on 3D models
+      AFRAME.registerComponent("clickable", {
+        init: function () {
+          let el = this.el;
+          let modelName = this.data.name || "park object";
+
+          // Add click event listener
+          el.addEventListener("click", function () {
+            // Play animation
+            el.setAttribute("animation", {
+              property: "scale",
+              to: "0.7 0.7 0.7",
+              dur: 200,
+              easing: "easeOutQuad",
+              loop: false,
+              dir: "alternate",
+            });
+
+            // Show info
+            document.getElementById("info-text").textContent =
+              "You clicked on: " + modelName;
+            document.getElementById("info-panel").style.display = "block";
+
+            // Hide info after 3 seconds
+            setTimeout(function () {
+              document.getElementById("info-panel").style.display = "none";
+            }, 3000);
+          });
+        },
+        schema: {
+          name: { type: "string", default: "" },
+        },
+      });
+
+      // Function to toggle sound
+      function toggleSound() {
+        // Get all sound entities
+        let sounds = document.querySelectorAll("[sound]");
+        sounds.forEach(function (sound) {
+          let component = sound.components.sound;
+          if (component.isPlaying) {
+            component.pauseSound();
+          } else {
+            component.playSound();
+          }
+        });
+      }
+
+      // Function to toggle day/night mode
+      function toggleDayNight() {
+        let scene = document.querySelector("a-scene");
+        let currentMode = scene.getAttribute("data-mode") || "day";
+
+        if (currentMode === "day") {
+          // Switch to night mode
+          scene.setAttribute("data-mode", "night");
+          scene.setAttribute("fog", "color: #001; density: 0.05");
+          // Add some stars
+          if (!document.querySelector("#night-sky")) {
+            let sky = document.createElement("a-entity");
+            sky.id = "night-sky";
+            sky.setAttribute(
+              "particle-system",
+              "preset: stars; particleCount: 100; size: 0.5; color: #FFF"
+            );
+            sky.setAttribute("position", "0 10 0");
+            scene.appendChild(sky);
+          } else {
+            document.querySelector("#night-sky").setAttribute("visible", true);
+          }
+          document.getElementById("day-night-btn").textContent =
+            "Switch to Day";
+        } else {
+          // Switch to day mode
+          scene.setAttribute("data-mode", "day");
+          scene.removeAttribute("fog");
+          if (document.querySelector("#night-sky")) {
+            document.querySelector("#night-sky").setAttribute("visible", false);
+          }
+          document.getElementById("day-night-btn").textContent =
+            "Switch to Night";
+        }
+      }
+    </script>
+  </head>
+  <body style="margin: 0; overflow: hidden">
+    <div class="instructions">Point camera at markers to see park objects</div>
+
+    <div id="info-panel" class="info-panel">
+      <span id="info-text">Object information</span>
+    </div>
+
+    <div class="buttons">
+      <button class="ar-button" onclick="toggleSound()">Toggle Sounds</button>
+      <button class="ar-button" id="day-night-btn" onclick="toggleDayNight()">
+        Switch to Night
+      </button>
+    </div>
+
+    <a-scene
+      embedded
+      arjs="detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
+    >
+      <!-- Asset Management System -->
+      <a-assets>
+        <!-- Sound effects -->
+        <audio
+          id="bird-sound"
+          src="sounds/bird-chirping.mp3"
+          preload="auto"
+        ></audio>
+        <audio
+          id="fountain-sound"
+          src="sounds/fountain.mp3"
+          preload="auto"
+        ></audio>
+        <audio
+          id="children-sound"
+          src="sounds/children-playing.mp3"
+          preload="auto"
+        ></audio>
+        <audio
+          id="nature-sound"
+          src="sounds/nature-ambience.mp3"
+          preload="auto"
+        ></audio>
+
+        <!-- 3D models - Update these paths to your actual model files -->
+        <a-asset-item id="tree-model" src="models/tree.glb"></a-asset-item>
+        <a-asset-item id="bench-model" src="models/bench.glb"></a-asset-item>
+        <a-asset-item
+          id="fountain-model"
+          src="models/fountain.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="slide-model"
+          src="models/playground-slide.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="flowers-model"
+          src="models/flowers.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <!-- Tree Marker (using Hiro) -->
+      <a-marker type="pattern" id="tree-marker" url="markers/tree-marker.patt">
+        <!-- Tree 3D model -->
+        <a-entity
+          position="0 0.5 0"
+          scale="0.5 0.5 0.5"
+          rotation="0 0 0"
+          gltf-model="#tree-model"
+          clickable="name: Park Tree"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
+        >
+        </a-entity>
+
+        <!-- Bird sound on this marker -->
+        <a-entity
+          sound="src: #bird-sound; autoplay: true; loop: true; volume: 0.5"
+        ></a-entity>
+
+        <!-- Particle effect for leaves -->
+        <a-entity
+          position="0 1 0"
+          particle-system="preset: dust; color: #00FF00; particleCount: 50; size: 0.2; maxAge: 2"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Park Tree"
+          position="0 1.5 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Bench Marker -->
+      <a-marker
+        type="pattern"
+        id="bench-marker"
+        url="markers/bench-marker.patt"
+      >
+        <!-- Bench 3D model -->
+        <a-entity
+          position="0 0.2 0"
+          scale="0.4 0.4 0.4"
+          rotation="0 0 0"
+          gltf-model="#bench-model"
+          clickable="name: Park Bench"
+          animation="property: position; to: 0 0.3 0; dir: alternate; loop: true; dur: 2000; easing: easeInOutQuad"
+        >
+        </a-entity>
+
+        <!-- Nature ambient sound -->
+        <a-entity
+          sound="src: #nature-sound; autoplay: true; loop: true; volume: 0.3"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Park Bench"
+          position="0 1 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Playground Slide Marker (using custom pattern) -->
+      <a-marker
+        type="pattern"
+        url="markers/playground-marker.patt"
+        id="slide-marker"
+      >
+        <!-- Slide 3D model -->
+        <a-entity
+          position="0 0.5 0"
+          scale="0.3 0.3 0.3"
+          rotation="0 0 0"
+          gltf-model="#slide-model"
+          clickable="name: Playground Slide"
+        >
+        </a-entity>
+
+        <!-- Children playing sound -->
+        <a-entity
+          sound="src: #children-sound; autoplay: true; loop: true; volume: 0.5"
+        ></a-entity>
+
+        <!-- Text label with animation -->
+        <a-text
+          value="Playground Slide"
+          position="0 1.2 0"
+          align="center"
+          color="#FFFF00"
+          scale="0.5 0.5 0.5"
+          animation="property: scale; to: 0.6 0.6 0.6; dir: alternate; loop: true; dur: 1000; easing: easeInOutQuad"
+        >
+        </a-text>
+      </a-marker>
+
+      <!-- Flowers Marker -->
+      <a-marker
+        type="pattern"
+        url="markers/flowers-marker.patt"
+        id="slide-marker"
+      >
+        <!-- Flowers 3D model -->
+        <a-entity
+          position="0 0.2 0"
+          scale="0.4 0.4 0.4"
+          rotation="0 0 0"
+          gltf-model="#flowers-model"
+          clickable="name: Flower Bed"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
+        >
+        </a-entity>
+
+        <!-- Butterfly particle effect -->
+        <a-entity
+          position="0 0.5 0"
+          particle-system="preset: dust; color: #FF88FF; particleCount: 20; size: 0.1; maxAge: 3"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Flower Bed"
+          position="0 1 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Fountain Marker -->
+      <a-marker
+        type="pattern"
+        url="markers/fountain-marker.patt"
+        id="slide-marker"
+      >
+        <!-- Flowers 3D model -->
+        <a-entity
+          position="0 0.2 0"
+          scale="0.4 0.4 0.4"
+          rotation="0 0 0"
+          gltf-model="#flowers-model"
+          clickable="name: Flower Bed"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
+        >
+        </a-entity>
+
+        <!-- Butterfly particle effect -->
+        <a-entity
+          position="0 0.5 0"
+          particle-system="preset: dust; color: #FF88FF; particleCount: 20; size: 0.1; maxAge: 3"
+        ></a-entity>
+
+        <!-- Text label -->
+        <a-text
+          value="Fountain"
+          position="0 1 0"
+          align="center"
+          color="#FFFFFF"
+          scale="0.5 0.5 0.5"
+        ></a-text>
+      </a-marker>
+
+      <!-- Camera -->
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
