@@ -276,7 +276,27 @@
       >
         <!-- Flowers 3D model -->
         <a-entity
-          position="0 0 0"
+          position="-1 0 0"
+          scale="0.8 0.8 0.8"
+          rotation="0 0 0"
+          gltf-model="#flowers-model"
+          clickable="name: Flower Bed"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
+        >
+        </a-entity>
+
+        <a-entity
+          position="1 0 0"
+          scale="0.8 0.8 0.8"
+          rotation="0 0 0"
+          gltf-model="#flowers-model"
+          clickable="name: Flower Bed"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
+        >
+        </a-entity>
+
+        <a-entity
+          position="0 0 1"
           scale="0.8 0.8 0.8"
           rotation="0 0 0"
           gltf-model="#flowers-model"
