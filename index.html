@@ -189,8 +189,8 @@
           src="models/fountain.glb"
         ></a-asset-item>
         <a-asset-item
-          id="slide-model"
-          src="models/playground-slide.glb"
+          id="playground-model"
+          src="models/playground_set.glb"
         ></a-asset-item>
         <a-asset-item
           id="flowers-model"
@@ -268,14 +268,14 @@
       <a-marker
         type="pattern"
         url="markers/playground-marker.patt"
-        id="slide-marker"
+        id="playground-marker"
       >
         <!-- Slide 3D model -->
         <a-entity
           position="0 0 0"
           scale="0.1 0.1 0.1"
           rotation="0 0 0"
-          gltf-model="#slide-model"
+          gltf-model="#playground-model"
           clickable="name: Playground Slide"
         >
         </a-entity>
