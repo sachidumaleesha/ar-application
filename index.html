@@ -16,40 +16,194 @@
       #arjsDebugUIContainer {
         display: none;
       }
+      
+      /* Loading Screen */
+      .loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #3a7734;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      
+      .loading-title {
+        font-family: 'Arial', sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 8px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      .loading-progress {
+        width: 80%;
+        max-width: 300px;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+        margin-top: 20px;
+        overflow: hidden;
+      }
+      
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background-color: white;
+        transition: width 0.3s ease;
+      }
+      
+      .loading-text {
+        color: white;
+        margin-top: 10px;
+        font-family: 'Arial', sans-serif;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Enhanced UI Styles */
       .instructions {
         position: fixed;
         top: 10px;
         width: 100%;
         text-align: center;
         color: white;
-        background-color: rgba(0, 0, 0, 0.5);
-        padding: 10px;
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 12px;
         z-index: 999;
+        font-family: 'Arial', sans-serif;
+        border-radius: 8px;
+        max-width: 90%;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
       }
+      
       .info-panel {
         position: fixed;
         bottom: 20px;
         left: 20px;
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
-        padding: 10px;
+        padding: 15px;
         border-radius: 10px;
         z-index: 999;
         display: none;
+        font-family: 'Arial', sans-serif;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        transform: translateY(20px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
       }
+      
+      .info-panel.visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      
       .buttons {
         position: fixed;
         bottom: 20px;
         right: 20px;
         z-index: 999;
+        display: flex;
+        flex-direction: column;
       }
+      
       .ar-button {
-        padding: 10px;
+        padding: 12px 15px;
         margin: 5px;
-        background-color: rgba(0, 128, 255, 0.7);
+        background-color: rgba(0, 128, 255, 0.8);
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+      }
+      
+      .ar-button:hover {
+        background-color: rgba(0, 128, 255, 0.9);
+        transform: scale(1.05);
+      }
+      
+      .ar-button:active {
+        transform: scale(0.95);
+      }
+      
+      /* Marker detection indicator */
+      .marker-indicator {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 999;
+        font-family: 'Arial', sans-serif;
+        display: none;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      
+      .indicator-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: red;
+        margin-right: 8px;
+      }
+      
+      .indicator-dot.active {
+        background-color: #4CAF50;
+      }
+      
+      /* Toast notification */
+      .toast {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        z-index: 1000;
+        font-family: 'Arial', sans-serif;
+        opacity: 0;
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
       }
     </style>
 
@@ -73,14 +227,26 @@
             });
 
             // Show info
+            const infoPanel = document.getElementById("info-panel");
             document.getElementById("info-text").textContent =
               "You clicked on: " + modelName;
-            document.getElementById("info-panel").style.display = "block";
+            infoPanel.style.display = "block";
+            
+            // Add visible class for animation
+            setTimeout(() => {
+              infoPanel.classList.add("visible");
+            }, 10);
 
             // Hide info after 3 seconds
             setTimeout(function () {
-              document.getElementById("info-panel").style.display = "none";
+              infoPanel.classList.remove("visible");
+              setTimeout(() => {
+                infoPanel.style.display = "none";
+              }, 300);
             }, 3000);
+            
+            // Show toast notification
+            showToast("Interacting with " + modelName);
           });
         },
         schema: {
@@ -92,14 +258,24 @@
       function toggleSound() {
         // Get all sound entities
         let sounds = document.querySelectorAll("[sound]");
+        let isMuted = false;
+        
         sounds.forEach(function (sound) {
           let component = sound.components.sound;
           if (component.isPlaying) {
             component.pauseSound();
+            isMuted = true;
           } else {
             component.playSound();
           }
         });
+        
+        // Show toast notification
+        showToast(isMuted ? "Sounds muted" : "Sounds enabled");
+        
+        // Update button text
+        document.getElementById("sound-btn").textContent = 
+          isMuted ? "Enable Sounds" : "Mute Sounds";
       }
 
       // Function to toggle day/night mode
@@ -126,6 +302,9 @@
           }
           document.getElementById("day-night-btn").textContent =
             "Switch to Day";
+            
+          // Show toast notification
+          showToast("Night mode activated");
         } else {
           // Switch to day mode
           scene.setAttribute("data-mode", "day");
@@ -135,19 +314,115 @@
           }
           document.getElementById("day-night-btn").textContent =
             "Switch to Night";
+            
+          // Show toast notification
+          showToast("Day mode activated");
         }
       }
+      
+      // Function to show toast notification
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2000);
+      }
+      
+      // Function to simulate loading progress
+      function simulateLoading() {
+        const progressBar = document.querySelector('.progress-bar');
+        const loadingText = document.querySelector('.loading-text');
+        const loadingScreen = document.querySelector('.loading-screen');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 10;
+          if (progress > 100) progress = 100;
+          
+          progressBar.style.width = progress + '%';
+          loadingText.textContent = `Loading assets... ${Math.floor(progress)}%`;
+          
+          if (progress === 100) {
+            clearInterval(interval);
+            loadingText.textContent = 'Ready! Starting AR experience...';
+            
+            setTimeout(() => {
+              loadingScreen.style.opacity = '0';
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                // Show marker indicator after loading
+                document.querySelector('.marker-indicator').style.display = 'flex';
+                // Show initial toast
+                showToast("AR Experience started! Point camera at markers");
+              }, 500);
+            }, 1000);
+          }
+        }, 200);
+      }
+      
+      // Function to update marker detection indicator
+      function updateMarkerIndicator(isDetected) {
+        const indicator = document.querySelector('.indicator-dot');
+        if (isDetected) {
+          indicator.classList.add('active');
+          document.getElementById('indicator-text').textContent = 'Marker detected';
+        } else {
+          indicator.classList.remove('active');
+          document.getElementById('indicator-text').textContent = 'Searching for markers...';
+        }
+      }
+      
+      // Initialize when document is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Start loading simulation
+        simulateLoading();
+        
+        // Set up marker detection events
+        setTimeout(() => {
+          const markers = document.querySelectorAll('a-marker');
+          markers.forEach(marker => {
+            marker.addEventListener('markerFound', function() {
+              updateMarkerIndicator(true);
+              showToast(`Found ${marker.id.replace('-marker', '')} marker!`);
+            });
+            
+            marker.addEventListener('markerLost', function() {
+              updateMarkerIndicator(false);
+            });
+          });
+        }, 5000); // Wait for AR.js to initialize
+      });
     </script>
   </head>
   <body style="margin: 0; overflow: hidden">
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+      <h1 class="loading-title">Park AR Experience</h1>
+      <div class="spinner"></div>
+      <div class="loading-progress">
+        <div class="progress-bar"></div>
+      </div>
+      <p class="loading-text">Loading assets... 0%</p>
+    </div>
+    
     <div class="instructions">Point camera at markers to see park objects</div>
 
     <div id="info-panel" class="info-panel">
       <span id="info-text">Object information</span>
     </div>
+    
+    <div class="marker-indicator">
+      <div class="indicator-dot"></div>
+      <span id="indicator-text">Searching for markers...</span>
+    </div>
+    
+    <div id="toast" class="toast">Notification message</div>
 
     <div class="buttons">
-      <button class="ar-button" onclick="toggleSound()">Toggle Sounds</button>
+      <button class="ar-button" id="sound-btn" onclick="toggleSound()">Mute Sounds</button>
       <button class="ar-button" id="day-night-btn" onclick="toggleDayNight()">
         Switch to Night
       </button>
